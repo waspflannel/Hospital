@@ -5,6 +5,7 @@ from Doctor import Doctor
 import tkinter as tk
 from queue import PriorityQueue
 import asyncio
+import time
 
 class Hospital:
     def __init__(self, patient_list, doctor_list):
@@ -14,7 +15,7 @@ class Hospital:
 
     #initialize patient
     def init_patient(self):
-        for i in range(20):
+        for i in range(500000):
             patient_sickness_level = random.randint(1, 3)
             inverted_priority = -patient_sickness_level
             is_patient_checked_in = random.randint(0 , 100) < 10
@@ -55,7 +56,7 @@ class Hospital:
         while not self.patient_list.empty():
             patient = self.patient_list.get()[1]
             await self.start_treating(patient, self.available_doctors)
-            await asyncio.sleep(1)
+
 
     async def start_treating(self, patient , available_doctors):
         while not patient.isTreated:
@@ -63,15 +64,15 @@ class Hospital:
                 if patient.sickness_level <= doctor.treat_level:
                     available_doctors.remove(doctor)
                     doctor.isBusy = True
-                    print(f"Patient {patient.patient_id} is being treated by doctor {doctor.doctor_id} with sickness level {-1 *patient.sickness_level}")
-                    print(f"patient waited {patient.timeSpentWaiting} minuites")
+                    #print(f"Patient {patient.patient_id} is being treated by doctor {doctor.doctor_id} with sickness level {-1 *patient.sickness_level}")
+                    #print(f"patient waited {patient.timeSpentWaiting} minuites")
                     patient.isTreated = True
-                    print(f"Patient {patient.patient_id} is treated by doctor {doctor.doctor_id} it took {patient.treatmentTime} minuites")
+                    #print(f"Patient {patient.patient_id} is treated by doctor {doctor.doctor_id} it took {patient.treatmentTime} minuites")
                     doctor.isBusy = False
                     available_doctors.append(doctor)
                     return
-                else:
-                    print(f"Doctor {doctor.doctor_id} cannot treat patient {patient.patient_id} due to sickness level")
+                #else:
+                    #print(f"Doctor {doctor.doctor_id} cannot treat patient {patient.patient_id} due to sickness level")
     
 
         
@@ -88,7 +89,11 @@ async def main():
     hospital = Hospital(patient_list, doctor_list)
     hospital.init_patient()
     hospital.init_doctor()
+
+    start = time.time()
     await hospital.treat_patient()
+    end = time.time()
+    print(end - start)
 
 if __name__ =="__main__":
     asyncio.run(main())
